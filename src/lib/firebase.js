@@ -2,9 +2,6 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-
-import { initializeApp } from "firebase/app";
-
 const firebaseConfig = {
   apiKey: "AIzaSyDbX_vLc6qDdGo98hXOHCJHFHhG4gZNs4A",
   authDomain: "fir-itssjap1.firebaseapp.com",
@@ -15,4 +12,36 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+
+const FIREBASE_COLLECTION = 'todos';
+
+export const getAllTodos = async () => {
+  const snapshot = await firebase.firestore().collection(FIREBASE_COLLECTION).get();
+
+  const mapData = snapshot.docs.map(doc => {
+    return {
+      documentId: doc.id, //collection id in firebase
+      text: doc.data().text,
+      done: doc.data().done
+    }
+  });
+  // console.log(mapData);
+  return mapData;
+}
+
+export const addNewTodo = async (newTodo) => {
+  return await firebase.firestore().collection(FIREBASE_COLLECTION).add(newTodo);
+}
+
+export const changeTodoStatus = async (id) => {
+  // console.log(id); 
+  const updatedTodo = firebase.firestore().collection(FIREBASE_COLLECTION).doc(id);
+  return updatedTodo.update({ "done": !updatedTodo.done })
+}
+
+export const deleteAllTodos = async (ids) => {
+  for (const id of ids) {
+    await firebase.firestore().collection(FIREBASE_COLLECTION).doc(id).delete();
+  }
+}
