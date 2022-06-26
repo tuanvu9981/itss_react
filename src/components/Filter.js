@@ -1,8 +1,8 @@
 function Filter({ value, onChange }) {
 
-  const handleClick = (key, e) => {
+  const handleClick = (documentId, e) => {
     e.preventDefault();
-    onChange(key);
+    onChange(documentId);
   };
 
   return (
